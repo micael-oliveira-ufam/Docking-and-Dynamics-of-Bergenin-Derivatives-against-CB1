@@ -7,7 +7,7 @@ This repository contains the input and output files for each target, organized i
 ## Authors
 
 - **Larissa Souza**, [Universidade Federal do Amazonas]. Student; molecular docking and analysis (undergraduate thesis, TCC).
-- **Micael Oliveira**, [Universidade Federal do Amazonas]. Repository maintainer [role in the project, to be confirmed].
+- **Micael Oliveira**, [Universidade Federal do Amazonas]. Repository maintainer [aided at simulations].
 
 Corresponding author: [name], [e-mail].
 
