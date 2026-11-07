@@ -1,23 +1,31 @@
-# Docking e dinâmica molecular de derivados da bergenina frente ao CB1
+# Docking and molecular dynamics of bergenin derivatives against the CB1 receptor
 
-Dados de docking molecular (AutoDock Vina) e relatórios de dinâmica molecular (Desmond, 200 ns) de derivados da bergenina contra o receptor canabinoide CB1. São quatro estruturas de partida, identificadas pelo código PDB: **5TGZ**, **6KPG**, **6N4B** e **8GHV**.
+Molecular docking data (AutoDock Vina) and molecular dynamics reports (Desmond, 200 ns) for bergenin derivatives docked against the cannabinoid receptor CB1. Four starting structures, identified by their PDB codes, were used: **5TGZ**, **6KPG**, **6N4B** and **8GHV**.
 
-Este repositório reúne os arquivos de entrada e de saída organizados por alvo, com um manifesto de auditoria (MD5 de cada arquivo) e scripts para verificar a integridade e reconstruir a organização a partir dos arquivos originais.
+This repository contains the input and output files for each target, organized in a self-contained folder per target. A manifest records the MD5 checksum of every file, and scripts verify file integrity and rebuild the layout from the original archives.
 
-## Estrutura
+## Authors
+
+- **Larissa [surname]**, [affiliation]. Student; molecular docking and analysis (undergraduate thesis, TCC).
+- **Micael Oliveira**, [affiliation; Universidade Federal do Amazonas, to be confirmed]. Repository maintainer [role in the project, to be confirmed].
+
+Corresponding author: [name], [e-mail].
+
+## Repository structure
 
 ```
 .
 ├── README.md
-├── MANIFEST.csv              # 3.949 arquivos: destino, origem original, MD5, tamanho
-├── EXCLUIDOS.csv             # 23 itens descartados ou registrados, com o motivo
+├── MANIFEST.csv                 # 3,949 files: destination, original source, MD5, size
+├── EXCLUDED.csv                 # 23 items discarded or logged, with the reason
+├── .gitignore
 ├── docs/
-│   ├── software.md           # programas, versões e como obter o AutoDock Vina
-│   └── problemas_conhecidos.md
+│   ├── software.md              # programs, versions, and how to obtain AutoDock Vina
+│   └── known_issues.md          # open issues and items requiring the authors' input
 ├── scripts/
-│   ├── organizar_repositorio.py   # reconstrói targets/ a partir dos zips originais
-│   ├── verificar.py               # integridade (MD5) e caminhos dos configs
-│   └── third_party/LaBOX.py       # cálculo de caixa de grid (software de terceiros)
+│   ├── organize_repository.py   # rebuilds targets/ from the original archives
+│   ├── verify.py                # file integrity (MD5) and receptor paths in configs
+│   └── third_party/LaBOX.py     # grid box calculation (third-party software)
 └── targets/
     ├── 5TGZ/
     ├── 6KPG/
@@ -25,57 +33,57 @@ Este repositório reúne os arquivos de entrada e de saída organizados por alvo
     └── 8GHV/
 ```
 
-Cada pasta em `targets/` é autocontida e mantém a estrutura original do trabalho. Isso importa porque os arquivos de configuração usam caminhos relativos (por exemplo, `Receptor/...`), que só funcionam se o Vina for executado a partir da pasta do alvo.
+Each folder in `targets/` is self-contained and keeps the internal structure of the original work. This matters because the configuration files use relative paths (for example `Receptor/...`), which only resolve when Vina is run from inside the target folder.
 
-Dentro de cada alvo aparecem, em geral, as seguintes partes: o receptor (`Receptor/` e arquivos `*_prep_maestro.pdbqt`), os ligantes de referência (`Ligantes/` ou `Ligantes_originais/`), os derivados gerados no Maestro (`Derivado_gerados_por_AI_no_Maestro/` e variantes), os configs de docking (`config_*.txt`), as saídas de *blind docking* e *site docking* (pastas `Screening*`), e as figuras e análises de interação (`Analises*/` e imagens `*.png`).
+Most targets contain the following parts. `Receptor/` holds the prepared receptor (`*_prep_maestro.pdbqt`). `Ligands/` (or `Ligands_original/`) holds the reference ligands. `Derivative_generated_by_AI_in_Maestro/` and related folders hold the generated bergenin derivatives. `config_*.txt` files hold the docking configurations. The `Screening*` folders hold blind-docking and site-docking outputs. `Analyses*/` folders hold interaction figures and analyses.
 
-No alvo 6N4B estão também `Dinamica_molecular/`, com os complexos de entrada para dinâmica, e `Relatorios_dinamica/`, com os oito relatórios em PDF das simulações de 200 ns. Há ainda uma triagem de docking que, pelos parâmetros e pelo identificador de job, parece ter sido executada em servidor web (`triagem_6n4b_..._bergenina_...`), com os parâmetros do algoritmo genético e o identificador do job.
+The 6N4B target also contains `Molecular_dynamics/` (complex structures used as simulation inputs) and `MD_reports/` (eight PDF reports of the 200 ns simulations). It also contains a docking screening job, `screening_6n4b_CB1_derivatives_AI_bergenin_...`, whose parameters and job identifier suggest it was run on a web server.
 
-| Alvo | Arquivos | Observação |
+| Target | Files | Notes |
 |---|---:|---|
-| 5TGZ | 756 | blind e site docking, triagens 1 a 3 |
-| 6KPG | 684 | ver pendência no config de site docking |
-| 6N4B | 1.568 | inclui dinâmica molecular e triagem em servidor web |
-| 8GHV | 940 | blind e site docking |
+| 5TGZ | 756 | blind and site docking; screenings 1 to 3 |
+| 6KPG | 684 | see the open issue on the site-docking configuration |
+| 6N4B | 1,568 | includes molecular dynamics and a web-server screening job |
+| 8GHV | 940 | blind and site docking |
 
-## Como reproduzir
+## Reproducing the analysis
 
-**1. Software.** As versões e as formas de obtenção estão em `docs/software.md`. O ponto mais importante é o AutoDock Vina 1.2.7, que não foi redistribuído aqui.
+**1. Software.** Versions and sources are listed in `docs/software.md`. The key dependency is AutoDock Vina 1.2.7, which is not redistributed in this repository.
 
-**2. Reconstruir a organização.** Com os dois zips originais em mãos:
+**2. Rebuilding the layout.** With the two original archives:
 
 ```bash
-python3 scripts/organizar_repositorio.py \
+python3 scripts/organize_repository.py \
     --tcc "Larissa__TCC_.zip" \
-    --relatorios "Relatórios_da_dinâmica.zip" \
-    --destino repo_reconstruido
+    --reports "Relatórios_da_dinâmica.zip" \
+    --dest rebuilt_repository
 ```
 
-O script é determinístico. Ele descarta os 9 zips aninhados que são cópias idênticas dos arquivos já presentes (checagem por CRC32 e tamanho), extrai os 2 que têm conteúdo próprio, remove binários e temporários, converte nomes para ASCII e grava `MANIFEST.csv` e `EXCLUIDOS.csv`.
+The script is deterministic: running it twice produces identical outputs. It discards the nine nested archives whose contents are identical to files already present (checked by CRC32 and size), extracts the two nested archives with unique content, removes binaries and temporary files, converts names to ASCII and English, and writes `MANIFEST.csv` and `EXCLUDED.csv`.
 
-**3. Verificar.** A partir da raiz do repositório:
+**3. Verification.** From the repository root:
 
 ```bash
-python3 scripts/verificar.py
+python3 scripts/verify.py
 ```
 
-O script recalcula o MD5 de todos os arquivos listados no manifesto e checa se o receptor de cada config existe. Hoje ele passa na integridade e aponta uma falha de configuração, descrita em `docs/problemas_conhecidos.md`.
+The script recomputes the MD5 of every file in the manifest and checks that the receptor named in each configuration exists. All files pass the integrity check. One configuration fails the receptor check; see `docs/known_issues.md`, item 1.
 
-**4. Exemplo de docking.** Os configs não registram o comando completo. Este é um exemplo que segue a convenção de nomes dos arquivos, a ser ajustado conforme a execução original:
+**4. Example docking command.** Configuration files do not record the full command. The following reconstructs the naming convention and should be adjusted to the original run:
 
 ```bash
 cd targets/5TGZ
 vina --config config_5tgz_CB1_blind_docking.txt \
-     --ligand Ligantes/THC.pdbqt \
+     --ligand Ligands/THC.pdbqt \
      --out Screening1_results_blind_docking_CB1_5TGZ/THC_out.pdbqt
 ```
 
-As caixas de grid usadas estão nos próprios configs (`center_x/y/z`, `size_x/y/z`) e o `exhaustiveness` é 96 em todos.
+The docking box is defined in each configuration file (`center_x/y/z`, `size_x/y/z`), and `exhaustiveness` is 96 in all of them.
 
-## Limitações
+## Known limitations
 
-A pasta contém os resultados e as entradas, mas não o registro completo de cada execução. Faltam os comandos exatos, as versões de vários programas e os arquivos de entrada da dinâmica molecular no Desmond (`.cms` e `.msj`). Os relatórios em PDF existem, mas a simulação não pode ser refeita a partir deste repositório. Os detalhes e o que fazer em cada caso estão em `docs/problemas_conhecidos.md`.
+The repository contains the inputs and outputs, but not a complete record of each run. The exact commands, the versions of several programs, and the input files for the Desmond simulations (`.cms`, `.msj`) are missing. The MD reports are available as PDFs, but the simulations cannot be repeated from this repository alone. Details and suggested actions are in `docs/known_issues.md`.
 
-## Licença e citação
+## License and citation
 
-Licença e forma de citação ainda não definidas pelos autores. Antes de tornar o repositório público, é preciso escolher uma licença e preencher esta seção.
+A license has not yet been chosen, and citation information is pending. Both must be defined by the authors before public release.
